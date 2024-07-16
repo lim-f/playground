@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "preserve",
+    // "jsxImportSource": "/alins/packages/client-core/src/element/jsx.d.ts",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
+    "noEmit": false,
+    "types": [],
+    "composite": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      // "alins": ["alins/packages/client-core"],
+      // "alins-reactive": ["alins/packages/client-reactive"],
+      // "alins-utils": ["alins/packages/client-utils"],
+      // "alins-compiler-web": ["alins/packages/compiler-web"],
+      // "alins-compiler-core": ["alins/packages/compiler-core"],
+      // "alins-*": ["src/packages/*/index.ts"],
+      "src/*": ["src/*"]
+    }
+  },
+  "include": [
+    "src/*.ts",
+    "src/*.tsx",
+    "src/**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.json",
+    "examples/**/*.tsx",
+    "vite.config.ts"
+  ]
+}

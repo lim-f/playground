@@ -1,0 +1,40 @@
+{
+  "name": "alins-playground",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "example": "node scripts/genarate-example.js",
+    "watch:example": "onchange 'examples/**/*.tsx' -- npm run example",
+    "dev": "npm run example && vite --host",
+    "lint": "eslint --fix",
+    "build": "npm run example && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.21.4",
+    "@babel/standalone": "^7.22.10",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "@vitejs/plugin-legacy": "^4.0.2",
+    "alins": "0.0.36",
+    "alins-compiler-web": "0.0.36",
+    "alins-reactive": "^0.0.36",
+    "copy-util": "^1.0.1",
+    "eslint": "8.2.0",
+    "eslint-plugin-react": "^7.33.1",
+    "eveit": "^0.0.1",
+    "highlight.js": "^11.8.0",
+    "less": "^4.1.3",
+    "lz-string": "^1.5.0",
+    "monaco-editor": "^0.41.0",
+    "monaco-editor-textmate": "^4.0.0",
+    "monaco-textmate": "^3.0.1",
+    "onchange": "^7.1.0",
+    "onigasm": "^2.0.0",
+    "terser": "^5.16.8",
+    "typescript": "^4.9.3",
+    "typescript-eslint": "0.0.1-alpha.0",
+    "vite": "^4.2.0",
+    "vite-plugin-alins": "0.0.36"
+  }
+}

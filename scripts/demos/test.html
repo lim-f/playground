@@ -1,0 +1,333 @@
+<!--
+ * @Author: chenzhongsheng
+ * @Date: 2023-08-20 00:06:11
+ * @Description: Coding something
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style></style>
+</head>
+<body>
+
+
+    <div style="height:400px;width:800px;" id="App1">
+       
+    </div>
+    <div style="height:400px;width:800px;" id="App2">
+    </div>
+
+    <script>
+
+        let devtoolsLoaded;
+
+        function devToolLoaded(){
+            devtoolsLoaded = true;
+            loadSample();
+        }
+
+        function onLoad(){
+          if (devtoolsLoaded) iframe.contentWindow.postMessage({ event: 'LOADED' }, '*');
+          iframe.contentWindow.postMessage({ event: 'CODE_UPDATE', value: 'console.log(22222)' }, '*');
+        //   iframe.contentDocument.documentElement.classList.toggle('dark', props.isDark);
+        }
+
+
+        const messageListener = (event) => {
+                if (event.source === devtoolIframe.contentWindow) {
+                    devtoolIframe.contentWindow.postMessage(event.data, '*');
+                }
+                if (event.source === devtoolIframe.contentWindow) {
+                    iframe.contentWindow.postMessage({ event: 'DEV', data: event.data }, '*');
+                }
+            };
+            window.addEventListener('message', messageListener);
+
+        loadDevtool();
+
+        function loadDevtool(){
+            const html = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="utf-8">
+                <title>DevTools</title>
+                <style>
+                    @media (prefers-color-scheme: dark) {
+                    body {
+                        background-color: rgb(41 42 45);
+                    }
+                    }
+                </style>
+                <meta name="referrer" content="no-referrer">
+                <script src="https://unpkg.com/@ungap/custom-elements/es.js"><\/script>
+                <script type="module" src="https://cdn.jsdelivr.net/npm/chii@1.8.0/public/front_end/entrypoints/chii_app/chii_app.js"><\/script>
+            <\/head>
+            <body class="undocked" id="-blink-dev-tools">
+                <script>
+                    console.log('111')    
+                    // setInterval(()=>{
+                    //     console.log('3333')
+                    // }, 1000);
+                <\/script>
+            <\/body>
+            <\/html>`;
+            const devtoolsRawUrl = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+            const src = `${devtoolsRawUrl}#?embedded=${encodeURIComponent(location.origin)}`;
+            console.log('devtoolsRawUrl', src);
+            // const src = `${devtoolsRawUrl}#?embedded=${encodeURIComponent(location.href)}`;
+
+            // devtoolIframe.src = src;
+            App1.innerHTML = ` <iframe 
+            style="height:100%;width:100%;" id="devtoolIframe" src="${src}"
+            onload="devToolLoaded()"
+            ></iframe>`
+        }
+
+        function loadSample(){
+
+                const html2 = `
+  <!doctype html>
+  <html>
+    <head>
+      <meta charset="UTF-8" \/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" \/>
+
+      <link href="https://unpkg.com/modern-normalize@1.1.0/modern-normalize.css" rel="stylesheet">
+      <script async src="https://ga.jspm.io/npm:es-module-shims@1.7.0/dist/es-module-shims.js"><\/script>
+      <style>
+        html, body {
+          position: relative;
+          width: 100%;
+          height: 100%;
+        }
+
+        body {
+          color: #333;
+          margin: 0;
+          padding: 8px;
+          box-sizing: border-box;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+          max-width: 100%;
+        }
+
+        .dark body {
+          color: #e5e7eb;
+        }
+
+        .dark {
+          color-scheme: dark;
+        }
+
+        input, button, select, textarea {
+          padding: 0.4em;
+          margin: 0 0 0.5em 0;
+          box-sizing: border-box;
+          border: 1px solid #ccc;
+          border-radius: 2px;
+        }
+
+        button {
+          color: #333;
+          background-color: #f4f4f4;
+          outline: none;
+        }
+
+        button:disabled {
+          color: #999;
+        }
+
+        button:not(:disabled):active {
+          background-color: #ddd;
+        }
+
+        button:focus {
+          border-color: #666;
+        }
+      <\/style>
+      <script src="https://cdn.jsdelivr.net/npm/chobitsu"><\/script>
+      <script type="module">
+        window.addEventListener('message', async ({ data }) => {
+          const { event, value } = data;
+
+          if (event !== 'CODE_UPDATE') return;
+
+          window.dispose?.();
+          window.dispose = undefined;
+
+          document.getElementById('app').innerHTML = "";
+
+        //   console.clear();
+
+          document.getElementById('appsrc')?.remove();
+          const script = document.createElement('script');
+          script.src = value;
+          script.id = 'appsrc';
+          script.type = 'module';
+          document.body.appendChild(script);
+
+          const load = document.getElementById('load');
+          if (load) load.remove();
+        });
+        const sendToDevtools = (message) => {
+          window.parent.postMessage(JSON.stringify(message), '*');
+        };
+        let id = 0;
+        const sendToChobitsu = (message) => {
+          message.id = 'tmp' + ++id;
+          chobitsu.sendRawMessage(JSON.stringify(message));
+        };
+        chobitsu.setOnMessage((message) => {
+          if (message.includes('"id":"tmp')) return;
+          window.parent.postMessage(message, '*');
+        });
+        window.addEventListener('message', ({ data }) => {
+          console.log('message--',data);
+          try {
+            const { event, value } = data;
+            if (event === 'DEV') {
+              chobitsu.sendRawMessage(data.data);
+            } else if (event === 'LOADED') {
+              sendToDevtools({
+                method: 'Page.frameNavigated',
+                params: {
+                  frame: {
+                    id: '1',
+                    mimeType: 'text/html',
+                    securityOrigin: location.origin,
+                    url: location.href,
+                  },
+                  type: 'Navigation',
+                },
+              });
+              sendToChobitsu({ method: 'Network.enable' });
+              sendToDevtools({ method: 'Runtime.executionContextsCleared' });
+              sendToChobitsu({ method: 'Runtime.enable' });
+              sendToChobitsu({ method: 'Debugger.enable' });
+              sendToChobitsu({ method: 'DOMStorage.enable' });
+              sendToChobitsu({ method: 'DOM.enable' });
+              sendToChobitsu({ method: 'CSS.enable' });
+              sendToChobitsu({ method: 'Overlay.enable' });
+              sendToDevtools({ method: 'DOM.documentUpdated' });
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        });
+      <\/script>
+    <\/head>
+    <body>
+      <div id="load" style="display: flex; height: 80vh; align-items: center; justify-content: center;">
+        <p style="font-size: 1.5rem">Loading the playground...<\/p>
+      <\/div>
+      <div id="app"><\/div>
+      <script id="appsrc" type="module"><\/script>
+    <\/body>
+  <\/html>`;
+            const url = URL.createObjectURL(
+                new Blob([html2], {
+                    type: 'text/html',
+                }),
+            );
+            console.log('iframe src', url);
+
+            // iframe.src = url;
+                App2.innerHTML = `<iframe 
+        style="height:100%;width:100%;" id="iframe" src="${url}"
+        onload="onLoad()"
+        sandbox="allow-popups-to-escape-sandbox allow-scripts allow-popups allow-forms allow-pointer-lock allow-top-navigation allow-modals allow-same-origin"
+        ></iframe>`
+
+        
+
+
+        }
+
+
+
+
+
+
+    </script>
+    <!-- <div style="display: flex; flex-direction: column;height: 100%;">
+        <div style="height:40px">title</div>
+        <div style="flex: 1; display: flex; ">
+            <div style="width: 100px;">
+                111
+            </div>
+            <div style="flex: 1; overflow: auto;">
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+                <div>content</div>
+            </div>
+
+        </div>
+    </div> -->
+</body>
+</html>

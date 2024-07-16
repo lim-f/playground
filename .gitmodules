@@ -1,0 +1,3 @@
+[submodule "alins"]
+	path = alins
+	url = git@github.com:alinsjs/alins.git
