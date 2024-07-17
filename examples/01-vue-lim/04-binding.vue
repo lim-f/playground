@@ -1,5 +1,5 @@
 <script setup lim>
-let value = '';
+let value = 'Hello';
 </script>
 <template>
   <input v-model="value"/>

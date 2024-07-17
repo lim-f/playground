@@ -3,7 +3,6 @@
  * @Date: 2023-08-14 21:31:45
  * @Description: Coding something
  */
-
 import { languages, editor } from 'monaco-editor';
 // import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 // @ts-ignore
@@ -23,7 +22,6 @@ import typescriptReactTM from './TypeScriptReact.tmLanguage.json';
 import onigasm from 'onigasm/lib/onigasm.wasm?url';
 import { loadWASM } from 'onigasm';
 import vsDark from './vs_dark_good.json';
-import examples from 'src/store/examples';
 import { isVueDemo } from 'src/utils';
 
 export type IEditor = editor.IStandaloneCodeEditor;
@@ -106,9 +104,8 @@ export function initEditorConfig (type: 'html'|'jsx') {
     }
 }
 
-const hashType = getHashType();
 
-console.warn(hashType);
+const hashType = getHashType();
 
 window.onhashchange = () => {
     if (!location.hash) return;

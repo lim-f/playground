@@ -17,7 +17,7 @@ export default [
     },
     {
         "name": "Binding",
-        "code": "<script setup lim>\nlet value = '';\n</script>\n<template>\n  <input v-model=\"value\"/>\n  <div> Binding value is {{value}}</div>\n</template>",
+        "code": "<script setup lim>\nlet value = 'Hello';\n</script>\n<template>\n  <input v-model=\"value\"/>\n  <div> Binding value is {{value}}</div>\n</template>",
         "title": "Vue Lim"
     },
     {
@@ -48,7 +48,7 @@ export default [
     },
     {
         "name": "Binding",
-        "code": "function App () {\n    let value = '';\n    return <>\n        <input onInput={e => value = e.target.value}/>\n        <div> Binding value is {value}</div>\n    </>;\n}",
+        "code": "function App () {\n    let value = 'Hello';\n    return <>\n        <input onInput={e => value = e.target.value} value={value}/>\n        <div> Binding value is {value}</div>\n    </>;\n}",
         "title": "React Lim"
     },
     {

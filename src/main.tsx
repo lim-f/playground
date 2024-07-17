@@ -21,18 +21,18 @@ window._status = status;
     $mount={document.body}
     class='main-container'>
     <div class='title-container'>
-        <span class='title-item main' onclick={window.open('https://github.com/theajack/lim-playground')}>
+        <span class='title-item main' onclick={window.open('https://github.com/lim-f/playground')}>
             <img style='height: 30px' src="/vue.svg" alt="" />
             <img style='height: 30px' src="/react.svg" alt="" />
             <span style='color: var(--theme-color)'>Lim Playground</span>
         </span>
         <span class='title-item info'>{status.info}</span>
         <span class='title-item right'>
-            <span onclick={window.open('https://alinsjs.github.io/docs/')}>
+            <span onclick={window.open('https://lim-f.github.io/docs/')}>
                 <i class="ei-file-text-o"></i>
                 Docs
             </span>
-            <span onclick={window.open('https://github.com/alinsjs/alins')}>
+            <span onclick={window.open(`https://github.com/lim-f/${status.isVueDemo() ? 'vue' : 'react'}-lim`)}>
                 <i class="ei-github"></i>
                 GitHub
             </span>

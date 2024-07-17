@@ -88,24 +88,16 @@ export function countCodeSize (code: string) {
     return size + ' byte';
 }
 
-export function createAlinsHTML (name: string, code: string) {
+export function createDownloadHTML (name: string, code: string, isVue: boolean) {
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${name}</title>
-    <script src="https://cdn.jsdelivr.net/npm/alins-compiler-web"></script>
 </head>
 <body>
-    <!--
-        This demo is only used for development and debugging. 
-        For official use, please refer to https://alinsjs.github.io/docs/
-    -->
-    <div id="App"></div>
-    <script type="text/alins" ts>
-${code}
-    </script>
+    ${isVue ? createVueIframeHTML(code) : createReactIframeHTML(code)};
 </body>
 </html>`;
 }
@@ -145,13 +137,16 @@ ${template}
     `;
 }
 
-const reactIndex = examples.findIndex(item => item.title.includes('React'));
 export function isVueDemo () {
-    const hash = location.hash;
-    if (hash && parseInt(hash.substring(1)) >= reactIndex) {
+    if (examples[getHashIndex()].title.includes('React')) {
         return false;
     }
     return true;
+}
+
+export function getHashIndex () {
+    const hash = location.hash;
+    return hash ? parseInt(hash.substring(1)) : 0;
 }
 
 

@@ -18,11 +18,11 @@ import javascript from 'highlight.js/lib/languages/javascript';// Then register 
 import html from 'highlight.js/lib/languages/xml';// Then register the languages you need
 
 import 'highlight.js/styles/vs2015.css';
-import { compressCode, copy, countCodeSize, createAlinsHTML, createIFrameSrc, getUrlParam } from 'src/utils';
+import { compressCode, copy, countCodeSize, createDownloadHTML, createIFrameSrc, getHashIndex, getUrlParam } from 'src/utils';
 import Examples from './examples';
 import eveit from 'eveit';
 import { compileLim } from 'src/components/libs/compiler';
-
+import 'src/function/custom-code';
 let downloadLink: any;
 
 function resultError (e: any, stack = true) {
@@ -39,11 +39,6 @@ function loadingResult () {
     app.innerHTML = `<div class='code-loading'>
         <i class=" ei-spinner-snake ei-spin"></i>
     </div>`;
-}
-
-function getHashIndex () {
-    const hash = location.hash === '#free' ? `#${Examples.length - 1}` : location.hash;
-    return hash ? parseInt(hash.substring(1)) : 0;
 }
 
 export const useStatus = createStore({
@@ -197,8 +192,10 @@ export const useStatus = createStore({
                 downloadLink.setAttribute('style', 'position: fixed;top: -100px');
                 document.body.appendChild(downloadLink);
             }
-            downloadLink.setAttribute('download', `${this.example.name.replace(/ /g, '-')}.alins.html`);
-            const blob = new Blob([ createAlinsHTML(this.example.name, this.editorCode) ], { type: 'text/html' });
+            downloadLink.setAttribute('download', `${this.example.name.replace(/ /g, '-')}.lim.html`.toLowerCase());
+            const blob = new Blob([
+                createDownloadHTML(this.example.name, this.runCode, this.isVueDemo)
+            ], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             downloadLink.href = url;
             downloadLink.click();
