@@ -16,14 +16,11 @@ dirs.forEach(dirName => {
     const title = formatName(dirName);
     let titleName = title;
     subDirs.forEach(fileName => {
-        const iframe = fileName.includes(':iframe');
-        const fileTrueName = !iframe ? fileName : fileName.replace(':iframe', '');
-        const itemName = formatName(fileTrueName, fileTrueName.indexOf('.'));
+        const itemName = formatName(fileName, fileName.indexOf('.'));
         const item = {
             name: itemName,
             code: fs.readFileSync(path.resolve(__dirname, `../examples/${dirName}/${fileName}`), 'utf8'),
             title,
-            iframe,
         };
         if (titleName) {
             item.head = titleName;

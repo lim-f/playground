@@ -67,6 +67,7 @@ export function IFrameRunner () {
             transform: 'translate(-50%, -50%)',
         }} class="ei-spinner-snake ei-spin"></i>
         <iframe
+            id='iframe'
             $ref:iframe
             $mounted={initDragEvent}
             src={status.iframeSrc}

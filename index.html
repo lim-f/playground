@@ -23,6 +23,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/theajack/easy-icon/dist/easy-icon.css">
   </head>
   <body>
+    <script>
+      window.process = { env: {} };
+      window.Buffer = {
+        from: (array) => new Uint8Array(array),
+        isBuffer: (v)=>v instanceof Uint8Array,
+      };
+    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

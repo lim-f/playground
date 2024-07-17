@@ -5,6 +5,8 @@
  */
 
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
+import { parseReact, parseVue } from './components/libs/compiler';
+import examples from './store/examples';
 
 export const IS_DEV = location.hostname === 'localhost';
 
@@ -108,18 +110,62 @@ ${code}
 </html>`;
 }
 
+function createReactIframeHTML (code: string) {
+    return `
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<div id="app"></div>
+<script>
+    ${parseReact(code)}
+    ReactDOM.render(
+        React.createElement(App, null),
+        document.getElementById('app')
+    );
+</script>
+    `;
+}
+
+function createVueIframeHTML (code: string) {
+
+    const { template, importCode, setup } = parseVue(code);
+
+    return `
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<div id="app">
+${template}
+</div>
+<script>
+    ${importCode}
+    createApp({
+        setup() {
+            ${setup}
+        }
+    }).mount('#app')
+</script>
+    `;
+}
+
+const reactIndex = examples.findIndex(item => item.title.includes('React'));
+export function isVueDemo () {
+    const hash = location.hash;
+    if (hash && parseInt(hash.substring(1)) >= reactIndex) {
+        return false;
+    }
+    return true;
+}
+
+
 // <script src="https://cdn.jsdelivr.net/npm/alins-compiler-web"></script>
 export function createIFrameSrc (code: string) {
+    const isVue = isVueDemo();
     // const alinsSrc = `${location.origin}${location.pathname}/alins.iife.min.js`;
     // debugger;
-    const alinsSrc = __DEV__ ? 'http://localhost:5173/alins.iife.min.js' : 'https://cdn.jsdelivr.net/npm/alins';
     const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iframe runner</title>
-    <script src="${alinsSrc}"></script>
     <style>
     body{color: #fff;}
     button, input, select{
@@ -139,7 +185,6 @@ export function createIFrameSrc (code: string) {
     </style>
 </head>
 <body>
-    <div id="App"></div>
     <script>
         function postMsg(type, data=[]) {
             window.parent.postMessage({type, data});
@@ -154,9 +199,7 @@ export function createIFrameSrc (code: string) {
             postMsg('iframe_loaded');
         });
     </script>
-    <script>
-${code}
-    </script>
+    ${isVue ? createVueIframeHTML(code) : createReactIframeHTML(code)}
 </body>
 </html>`;
     const blob = new Blob([ html ], { type: 'text/html' });

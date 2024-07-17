@@ -23,55 +23,11 @@ import typescriptReactTM from './TypeScriptReact.tmLanguage.json';
 import onigasm from 'onigasm/lib/onigasm.wasm?url';
 import { loadWASM } from 'onigasm';
 import vsDark from './vs_dark_good.json';
-
-// const modelUri = Uri.file('source.tsx');
-
-// const codeModel = editor.createModel(
-//     `
-//     class Foo {
-//         private value = 42;
-//         render() {
-//             return <div>
-//                 <div>
-//                     Hello World
-//                 </div>
-//                 <div>The value is {this.value}</div>
-//             </div>
-//         }
-//     }
-//     `,
-//     'typescript',
-//     modelUri // Pass the file name to the model here.
-// );
-
-const compilerOptions: languages.typescript.CompilerOptions = {
-    jsx: languages.typescript.JsxEmit.React,
-    jsxFactory: 'React.createElement',
-    reactNamespace: 'React',
-    allowNonTsExtensions: true,
-    allowJs: true,
-    target: languages.typescript.ScriptTarget.Latest,
-};
-
-languages.typescript.typescriptDefaults.setCompilerOptions(compilerOptions);
-languages.typescript.javascriptDefaults.setCompilerOptions(compilerOptions);
-
-languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-    noSemanticValidation: true,
-    noSyntaxValidation: true
-});
+import examples from 'src/store/examples';
+import { isVueDemo } from 'src/utils';
 
 export type IEditor = editor.IStandaloneCodeEditor;
-
-const registry = new Registry({
-    async getGrammarDefinition () {
-        return {
-            format: 'json',
-            content: typescriptReactTM,
-        };
-    },
-});
-
+const hookLanguages = languages.setLanguageConfiguration;
 // @ts-ignore
 self.MonacoEnvironment = {
     getWorker (_, label) {
@@ -93,58 +49,80 @@ self.MonacoEnvironment = {
     // @ts-ignore
     onigasm,
 };
-// editor.defineTheme('vsc-dark', {
-//     base: 'vs-dark',
-//     inherit: true,
-//     rules: [
-//         { token: 'keyword1', foreground: '569cd6' },
-//         { token: 'keyword2', foreground: 'c586c0' },
-//         { token: 'keyword3', foreground: '3ac9b0' },
-//         { token: 'identifier', foreground: '9cdcfe' },
-//         { token: 'function', foreground: 'dcdcaa' }
-//     ],
-//     colors: {}
-// });
-// editor.defineTheme('vsc-light', {
-//     base: 'vs',
-//     inherit: true,
-//     rules: [
-//         { token: 'keyword1', foreground: '0000ff' },
-//         { token: 'keyword2', foreground: 'af00db' },
-//         { token: 'keyword3', foreground: '267f99' },
-//         { token: 'identifier', foreground: '001090' },
-//         { token: 'function', foreground: 'b27878' }
-//     ],
-//     colors: {}
-// });
+
+export function initEditorConfig (type: 'html'|'jsx') {
+
+    console.log('initEditorConfig', type);
+
+    const compilerOptions: languages.typescript.CompilerOptions = {
+        jsx: languages.typescript.JsxEmit.React,
+        jsxFactory: 'React.createElement',
+        reactNamespace: 'React',
+        allowNonTsExtensions: true,
+        allowJs: true,
+        target: languages.typescript.ScriptTarget.Latest,
+    };
+
+    languages.typescript.typescriptDefaults.setCompilerOptions(compilerOptions);
+    languages.typescript.javascriptDefaults.setCompilerOptions(compilerOptions);
+
+    languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+        noSemanticValidation: true,
+        noSyntaxValidation: true
+    });
 
 
-const grammars = new Map();
-grammars.set('typescript', 'source.tsx');
-grammars.set('javascript', 'source.tsx');
-grammars.set('css', 'source.css');
+    const registry = new Registry({
+        async getGrammarDefinition () {
+            return {
+                format: 'json',
+                content: typescriptReactTM,
+            };
+        },
+    });
 
-editor.defineTheme('vs-dark-plus', vsDark as editor.IStandaloneThemeData);
 
-const hookLanguages = languages.setLanguageConfiguration;
+    const grammars = new Map();
+    grammars.set('typescript', 'source.tsx');
+    grammars.set('javascript', 'source.tsx');
+    grammars.set('css', 'source.css');
 
-languages.setLanguageConfiguration = (languageId: string, configuration: languages.LanguageConfiguration) => {
-    // liftOff();
-    return hookLanguages(languageId, configuration);
-};
+    editor.defineTheme('vs-dark-plus', vsDark as editor.IStandaloneThemeData);
 
-let loadingWasm: any;
 
-export async function liftOff (): Promise<void> {
-    // @ts-ignore
-    if (!loadingWasm) loadingWasm = loadWASM(self.MonacoEnvironment.onigasm);
-    await loadingWasm;
+    languages.setLanguageConfiguration = (languageId: string, configuration: languages.LanguageConfiguration) => {
+        if (type === 'jsx') liftOff();
+        return hookLanguages(languageId, configuration);
+    };
+    let loadingWasm: any;
+    async function liftOff (): Promise<void> {
+        // @ts-ignore
+        if (!loadingWasm) loadingWasm = loadWASM(self.MonacoEnvironment.onigasm);
+        await loadingWasm;
 
-    // wireTmGrammars only cares about the language part, but asks for all of monaco
-    // we fool it by just passing in an object with languages
-    await wireTmGrammars({ languages } as any, registry, grammars);
+        // wireTmGrammars only cares about the language part, but asks for all of monaco
+        // we fool it by just passing in an object with languages
+        await wireTmGrammars({ languages } as any, registry, grammars);
+    }
 }
 
+const hashType = getHashType();
+
+console.warn(hashType);
+
+window.onhashchange = () => {
+    if (!location.hash) return;
+
+    if (hashType !== getHashType()) {
+        location.reload();
+    }
+};
+
+function getHashType () {
+    return isVueDemo() ? 'html' : 'jsx';
+}
+
+initEditorConfig(hashType);
 
 export class Editor {
     dom: HTMLElement;
@@ -161,8 +139,8 @@ export class Editor {
             automaticLayout: true,
             value: code,
             padding: { top: 5 },
-            language: 'typescript',
-            theme: 'vs-dark-plus',
+            language: hashType === 'html' ? 'html' : 'typescript',
+            theme: hashType === 'html' ? 'vs-dark' : 'vs-dark-plus',
             fontSize: 14,
             lineDecorationsWidth: 5,
             lineNumbersMinChars: 3,
@@ -178,6 +156,7 @@ export class Editor {
                 onchange(this.code());
             });
         }
+
     }
     code(): string;
     code(v: string): this;

@@ -28,12 +28,7 @@ export function ResultBlock () {
                 onclick={status.resultNaviIndex = 1}>Output</span>
         </div>
         <If data={isActive(0)}>
-            <If data={status.example.iframe}>
-                <IFrameRunner/>
-            </If>
-            <Else>
-                <div id='App' style={{ height: status.resultPanelHeightCss }}></div>
-            </Else>
+            <IFrameRunner/>
         </If>
         <ElseIf data={isActive(1)}>
             <div class='highlight-container'

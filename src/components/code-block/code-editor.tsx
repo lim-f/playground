@@ -19,14 +19,11 @@ export function EditorBox () {
                 status.setCode(v);
             };
             const _editor = new Editor({
+                // @ts-ignore
                 dom,
                 code: status.example.code,
                 onchange: parseCode,
             });
-            // status.$watch('example.code', (code) => {
-            //     // console.log('examplecode');
-            //     _editor.code(code);
-            // });
             status.$watch('example.code', (code) => {
                 _editor.editor.setScrollTop(0);
                 _editor.code(code);

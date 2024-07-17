@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "example": "node scripts/genarate-example.js",
-    "watch:example": "onchange 'examples/**/*.tsx' -- npm run example",
+    "watch:example": "onchange 'examples/**/*' -- npm run example",
     "dev": "npm run example && vite --host",
     "lint": "eslint --fix",
     "build": "npm run example && vite build",

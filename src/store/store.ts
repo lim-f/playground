@@ -4,7 +4,6 @@
  * @Description: Coding something
  */
 import { createStore } from 'alins';
-import { parseWebAlins } from 'alins-compiler-web';
 
 // // @ts-ignore
 // import { createStore } from '../dist/alins/alins.esm.min';
@@ -16,11 +15,13 @@ import { parseWebAlins } from 'alins-compiler-web';
 
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';// Then register the languages you need
+import html from 'highlight.js/lib/languages/xml';// Then register the languages you need
 
 import 'highlight.js/styles/vs2015.css';
 import { compressCode, copy, countCodeSize, createAlinsHTML, createIFrameSrc, getUrlParam } from 'src/utils';
 import Examples from './examples';
 import eveit from 'eveit';
+import { compileLim } from 'src/components/libs/compiler';
 
 let downloadLink: any;
 
@@ -52,6 +53,7 @@ export const useStatus = createStore({
 
         const codeEditorWidth = (window.innerWidth - sidebarWidth) * 0.5;
         hljs.registerLanguage('javascript', javascript);
+        hljs.registerLanguage('html', html);
 
         const exampleIndex = getHashIndex();
         const example = Examples[exampleIndex];
@@ -127,9 +129,10 @@ export const useStatus = createStore({
         },
         setCode (v: string) {
             let result = '';
+            const isVue = this.isVueDemo();
             try {
                 this.editorCode = v;
-                result = parseWebAlins(v, { useImport: true, ts: true, filename: 'demo.tsx' });
+                result = compileLim(v, isVue);
             } catch (e: any) {
                 this.outputCode = e.toString().replace(/</g, '&lt;');
                 this.syntaxError = true;
@@ -137,12 +140,19 @@ export const useStatus = createStore({
                 return;
             }
 
+            console.warn('setCode', isVue);
             const highlightedCode = hljs.highlight(
                 result,
-                { language: 'javascript' }
+                { language: isVue ? 'html' : 'javascript' }
             );
             this.outputCode = highlightedCode.value;
-            this.runCode = result.replace(/import *\{(.*?)\} *from *['"]alins['"]/g, 'const {$1} = window.Alins');
+
+            // this.runCode = `console.log(${Math.random()})`;
+
+            this.runCode = result;
+
+            console.warn(this.runCode);
+            // this.runCode = result.replace(/import *\{(.*?)\} *from *['"]alins['"]/g, 'const {$1} = window.Alins');
 
             this.syntaxError = false;
 
@@ -151,6 +161,9 @@ export const useStatus = createStore({
             if (this.resultNaviIndex === 0) {
                 this.runCodeResult(false);
             }
+        },
+        isVueDemo () {
+            return this.example.title.includes('Vue');
         },
         onDragSize (x: number) {
             // console.warn(x, this.codeEditorLeft);
@@ -165,14 +178,9 @@ export const useStatus = createStore({
 
             try {
                 this.clearConsole();
-                if (this.example.iframe) {
-                    this.iframeCode = this.runCode;
-                    if (force) {
-                        eveit.emit('refresh-iframe');
-                    }
-                } else {
-                    document.getElementById('App')!.innerHTML = '';
-                    new Function(this.runCode)();
+                this.iframeCode = this.runCode;
+                if (force) {
+                    eveit.emit('refresh-iframe');
                 }
             } catch (e) {
                 console.error(e);
@@ -218,7 +226,7 @@ export const useStatus = createStore({
         },
         outputSize () {
             return countCodeSize(this.runCode);
-        }
+        },
     }
 });
 

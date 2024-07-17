@@ -41,15 +41,6 @@ export default defineConfig(({ mode }) => {
         resolve: {
             alias: {
                 'src': '/src',
-                // 'alins': '/alins/packages/client-core',
-                // 'alins-router': '/src/packages/router/index.ts',
-                // 'alins-store': '/src/packages/store/index.ts',
-                // 'alins-style': '/src/packages/style/index.ts',
-                // 'alins-ui': '/src/packages/ui/index.ts',
-                // 'alins-reactive': '/alins/packages/client-reactive',
-                // 'alins-utils': '/alins/packages/client-utils',
-                // 'alins-compiler-web': '/alins/packages/compiler-web',
-                // 'alins-compiler-core': '/alins/packages/compiler-core',
             }
         },
     };

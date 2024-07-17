@@ -14,11 +14,14 @@ export function ExamplesList () {
     const status = useStatus();
 
     return <For data={Examples}>
-        <div $show={$item.head} class='example-title'>{$item.head}</div>
+        <div $show={$item.head} class='example-title'>
+            {$item.head}
+        </div>
         <div
             class={`example-item ${status.exampleIndex === $index ? 'active' : ''}`}
             onclick={status.switchExample($index)}
         >
+            <img src={$item.title?.includes('Vue') ? '/vue.svg' : '/react.svg'}/>
             {$item.name}
         </div>
     </For>;

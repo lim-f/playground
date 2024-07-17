@@ -84,6 +84,9 @@ body,body *{
                 cursor: pointer;
                 .text-ellipsis;
                 border-left: 2px solid transparent;
+                display: flex;  
+                align-items: center;
+                gap: 10px;
                 &.active{
                     color: var(--theme-color);
                     background-color: #1e1e1e;
@@ -91,6 +94,9 @@ body,body *{
                 }
                 &:hover{
                     background-color: #222;
+                }
+                img {
+                    width: 20px;
                 }
             }
             .example-title{
