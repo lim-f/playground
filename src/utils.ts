@@ -200,3 +200,5 @@ export function createIFrameSrc (code: string) {
     const blob = new Blob([ html ], { type: 'text/html' });
     return URL.createObjectURL(blob);
 }
+
+export const AssetsPrefix = IS_DEV ? '' : '/playground/';

@@ -1,5 +1,6 @@
 import Examples from 'src/store/examples';
 import { useStatus } from 'src/store/store';
+import { AssetsPrefix } from '../../utils';
 
 /*
  * @Author: chenzhongsheng
@@ -21,7 +22,7 @@ export function ExamplesList () {
             class={`example-item ${status.exampleIndex === $index ? 'active' : ''}`}
             onclick={status.switchExample($index)}
         >
-            <img src={$item.title?.includes('Vue') ? '/vue.svg' : '/react.svg'}/>
+            <img src={AssetsPrefix + ($item.title?.includes('Vue') ? '/vue.svg' : '/react.svg')}/>
             {$item.name}
         </div>
     </For>;

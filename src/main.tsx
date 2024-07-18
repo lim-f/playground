@@ -10,7 +10,7 @@ import { useStatus } from './store/store';
 import { DragBar } from './components/widgets/drag-bar';
 import './styles/index.less';
 import { ConsoleBlock } from './components/console-block/console-block';
-import { IS_DEV, copy } from './utils';
+import { IS_DEV, copy, AssetsPrefix } from './utils';
 
 const status = useStatus();
 
@@ -22,8 +22,8 @@ window._status = status;
     class='main-container'>
     <div class='title-container'>
         <span class='title-item main' onclick={window.open('https://github.com/lim-f/playground')}>
-            <img style='height: 30px' src="/vue.svg" alt="" />
-            <img style='height: 30px' src="/react.svg" alt="" />
+            <img style='height: 30px' src={`${AssetsPrefix}/vue.svg`} alt="" />
+            <img style='height: 30px' src={`${AssetsPrefix}/react.svg`} alt="" />
             <span style='color: var(--theme-color)'>Lim Playground</span>
         </span>
         <span class='title-item info'>{status.info}</span>
